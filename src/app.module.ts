@@ -1,10 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AuthController } from './controllers/auth/auth.controller';
+import { AuthService } from './services/auth/auth.service';
+import { DatabaseService } from './services/database/database.service';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    NestjsFormDataModule
+  ],
+  controllers: [
+    AuthController
+  ],
+  providers: [
+    DatabaseService,
+    AuthService
+  ],
 })
 export class AppModule {}
