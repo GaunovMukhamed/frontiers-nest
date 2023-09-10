@@ -17,3 +17,10 @@ export class SuccessResponse {
   }
   message: string = 'Успешно!';
 }
+
+export interface LobbyItem {
+  id: number,
+  host: string,
+  users: string[],
+  status: number
+}

@@ -7,11 +7,11 @@ import { FormDataRequest } from 'nestjs-form-data';
 @Controller()
 export class AuthController {
 
-  constructor(private readonly appService: AuthService) {}
+  constructor(private _authService: AuthService) {}
 
   @Post('/authUser')
   @FormDataRequest()
   getHello(@Body() loginInfo: LoginFormData, @Res() res: Response): void {
-    this.appService.authUser(loginInfo, res);
+    this._authService.authUser(loginInfo, res);
   }
 }

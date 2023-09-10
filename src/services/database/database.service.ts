@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GristDocAPI } from "grist-api";
 import { RaceInfo } from 'src/models/game.models';
+import { LobbyItem } from 'src/models/general.models';
 import { User } from 'src/models/user.model';
 
 @Injectable()
@@ -18,13 +19,12 @@ export class DatabaseService {
     this.connection = new GristDocAPI(this.databaseUrl, {apiKey: this.gristApiKey});
   }
 
-  //users
+  // users
   async getUsers(): Promise<User[]> {
     return await this.connection!.fetchTable('Users') as unknown as User[];
   }
 
   async getUser(userLogin: string): Promise<User> {
-    console.log(userLogin)
     return (await this.connection!.fetchTable('Users') as unknown as User[]).find((usr: User) => usr.login === userLogin);
   }
 
@@ -32,7 +32,10 @@ export class DatabaseService {
   //   await this.connection!.addRecords('Users', [{ login, hash }]);
   // }
 
-  //
+  // lobby
+  async getLobbiesList(): Promise<LobbyItem[]> {
+    return await this.connection!.fetchTable('Lobbies') as unknown as LobbyItem[];
+  }
 
   async getRacesInfo(): Promise<RaceInfo[]> {
     return await this.connection!.fetchTable('Races') as unknown as RaceInfo[];
