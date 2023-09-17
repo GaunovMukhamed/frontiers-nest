@@ -6,8 +6,8 @@ export interface MainStats {
 }
 
 export interface CharacterCreationInfo {
-  gender: string[],
-  races: RaceInfo[]
+  gender: string[];
+  races: RaceInfo[];
 }
 
 export interface RaceInfo extends MainStats {

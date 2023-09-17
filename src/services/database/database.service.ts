@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RaceInfo } from 'src/models/game.models';
-import { LobbyItem } from 'src/models/general.models';
+import { LobbyItem, Scenario } from 'src/models/general.models';
 import { User } from 'src/models/user.model';
 import { google } from 'googleapis';
 import { GoogleSpreadsheet, GoogleSpreadsheetRow, GoogleSpreadsheetWorksheet } from 'google-spreadsheet';
@@ -12,6 +12,7 @@ export class DatabaseService {
 
   usersDocId: string = '14Z6F_aXavAJdHe_FwZmVEqYLAcIOkgQMwKADPS5kPYY';
   lobbiesDocId: string = '1EamewYN54MDBfppO8dz-qgGbXMXw3qc7toIJK9EJLS0';
+  scenariosDocId: string = '15DyKnJ2zXTukQc4kMvdNzLZtdgbznj9Rc_iDWjYeDuM';
 
   async loadSheetRows(sheetId: string): Promise<any[]> {
     const auth: any = new google.auth.GoogleAuth({
@@ -50,17 +51,17 @@ export class DatabaseService {
     return users.find((usr: User) => usr.login === userLogin);
   }
 
-  // async addUser(login: string, hash: string): Promise<void> {
-  //   await this.connection!.addRecords('Users', [{ login, hash }]);
-  // }
-
   // lobby
   async getLobbiesList(): Promise<LobbyItem[]> {
     return await this.loadSheetRows(this.lobbiesDocId);
   }
 
-  async getRacesInfo(): Promise<RaceInfo[]> {
-    return []
-    // return await this.connection!.fetchTable('Races') as unknown as RaceInfo[];
+  async getScenarios(): Promise<Scenario[]> {
+    return await this.loadSheetRows(this.scenariosDocId);
   }
+
+  // async getRacesInfo(): Promise<RaceInfo[]> {
+  //   return []
+  //   // return await this.connection!.fetchTable('Races') as unknown as RaceInfo[];
+  // }
 }

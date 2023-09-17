@@ -1,6 +1,6 @@
 export interface LoginFormData {
-  login: string,
-  password: string
+  login: string;
+  password: string;
 }
 
 export class ErrorBody {
@@ -19,8 +19,19 @@ export class SuccessResponse {
 }
 
 export interface LobbyItem {
-  id: number,
-  host: string,
-  users: string[],
-  status: number
+  id: number;
+  host: string;
+  users: string[];
+  status: number;
+}
+
+export interface Scenario {
+  id: number;
+  name: string;
+  info: any;
+}
+
+export interface CreateLobbyData {
+  scenario: number;
+  playersCount: number;
 }
