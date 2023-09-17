@@ -12,18 +12,23 @@ export class AuthService {
   ) {}
 
   async authUser(loginInfo: LoginFormData, res: Response): Promise<void> {
-    const foundUser: User | undefined = await this._databaseService.getUser(loginInfo.login);
-    if(foundUser) {
-      if(loginInfo.password === foundUser.password) {
-        res.status(HttpStatus.OK).json({
-          message: 'Вы успешно авторизованы',
-          login: loginInfo.login
-        });
+    try {
+      const foundUser: User | undefined = await this._databaseService.getUser(loginInfo.login);
+      if(foundUser) {
+        if(loginInfo.password === foundUser.password) {
+          res.status(HttpStatus.OK).json({
+            message: 'Вы успешно авторизованы',
+            login: loginInfo.login
+          });
+        } else {
+          res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Неверный пароль' });
+        }
       } else {
-        res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Неверный пароль' })
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Пользователь не существует' });
       }
-    } else {
-      res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Пользователь не существует' })
+    } catch(error: any) {
+      console.log(error)
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Ошибка при авторизации пользователя' })
     }
   }
 }

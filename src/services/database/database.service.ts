@@ -1,31 +1,53 @@
 import { Injectable } from '@nestjs/common';
-import { GristDocAPI } from "grist-api";
 import { RaceInfo } from 'src/models/game.models';
 import { LobbyItem } from 'src/models/general.models';
 import { User } from 'src/models/user.model';
+import { google } from 'googleapis';
+import { GoogleSpreadsheet, GoogleSpreadsheetRow, GoogleSpreadsheetWorksheet } from 'google-spreadsheet';
 
 @Injectable()
 export class DatabaseService {
 
-  constructor() {
-    this.connectToBase();
+  constructor() {}
+
+  usersDocId: string = '14Z6F_aXavAJdHe_FwZmVEqYLAcIOkgQMwKADPS5kPYY';
+  lobbiesDocId: string = '1EamewYN54MDBfppO8dz-qgGbXMXw3qc7toIJK9EJLS0';
+
+  async loadSheetRows(sheetId: string): Promise<any[]> {
+    const auth: any = new google.auth.GoogleAuth({
+      keyFile: './google-auth.json',
+      scopes: 'https://www.googleapis.com/auth/spreadsheets'
+    });
+    const doc: GoogleSpreadsheet = new GoogleSpreadsheet(sheetId, auth);
+    await doc.loadInfo();
+    return this.rowsToArray(doc.sheetsByIndex[0]);
   }
 
-  connection: GristDocAPI | undefined;
-  databaseUrl: string = "https://docs.getgrist.com/uCLARLTenEjf/WebRpg";
-  gristApiKey: string = "a8e3f544ef8259127973ecf18724629f37bc3763";
-
-  connectToBase(): void {
-    this.connection = new GristDocAPI(this.databaseUrl, {apiKey: this.gristApiKey});
+  async rowsToArray(sheet: GoogleSpreadsheetWorksheet): Promise<any[]> {
+    const rows: GoogleSpreadsheetRow[] = await sheet.getRows();
+    if(rows.length > 0) {
+      const headers: string[] = rows[0]._worksheet.headerValues;
+      const result: any[] = [];
+      rows.map((row: GoogleSpreadsheetRow) => {
+        const convertedRow: any = {};
+        headers.map((headerName: string, index: number) => {
+          convertedRow[headerName] = JSON.parse(JSON.stringify(row.get(headerName)));
+        });
+        result.push(convertedRow);
+      });
+      return result;
+    }
+    return [];
   }
 
   // users
   async getUsers(): Promise<User[]> {
-    return await this.connection!.fetchTable('Users') as unknown as User[];
+    return this.loadSheetRows(this.usersDocId);
   }
 
   async getUser(userLogin: string): Promise<User> {
-    return (await this.connection!.fetchTable('Users') as unknown as User[]).find((usr: User) => usr.login === userLogin);
+    const users: User[] = await this.loadSheetRows(this.usersDocId);
+    return users.find((usr: User) => usr.login === userLogin);
   }
 
   // async addUser(login: string, hash: string): Promise<void> {
@@ -34,10 +56,11 @@ export class DatabaseService {
 
   // lobby
   async getLobbiesList(): Promise<LobbyItem[]> {
-    return await this.connection!.fetchTable('Lobbies') as unknown as LobbyItem[];
+    return await this.loadSheetRows(this.lobbiesDocId);
   }
 
   async getRacesInfo(): Promise<RaceInfo[]> {
-    return await this.connection!.fetchTable('Races') as unknown as RaceInfo[];
+    return []
+    // return await this.connection!.fetchTable('Races') as unknown as RaceInfo[];
   }
 }
