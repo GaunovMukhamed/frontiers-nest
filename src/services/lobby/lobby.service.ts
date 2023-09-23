@@ -2,12 +2,14 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateLobbyData, LobbyItem, Scenario } from 'src/models/general.models';
 import { DatabaseService } from '../database/database.service';
 import { Request, Response } from 'express';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class LobbyService {
 
   constructor(
-    private _databaseService: DatabaseService
+    private _databaseService: DatabaseService,
+    private _authService: AuthService
   ) {}
 
   async getLobbiesList(res: Response): Promise<void> {
@@ -37,10 +39,10 @@ export class LobbyService {
     }
   }
 
-  async createLobby(req: CreateLobbyData, res: Response): Promise<void> {
+  async createLobby(req: Request, res: Response, createLobbyInfo: CreateLobbyData): Promise<void> {
     try {
+      const login: string = this._authService.getLogin(req);
 
-      // console.log(req)
     } catch(error: any) {
       console.log(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Ошибка при создании лобби' });

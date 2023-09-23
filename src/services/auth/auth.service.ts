@@ -2,7 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { LoginFormData } from 'src/models/general.models';
 import { User } from 'src/models/user.model';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { Base64 } from 'base64-string';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,8 @@ export class AuthService {
   constructor(
     private _databaseService: DatabaseService
   ) {}
+
+  enc = new Base64();
 
   async authUser(loginInfo: LoginFormData, res: Response): Promise<void> {
     try {
@@ -29,6 +32,14 @@ export class AuthService {
     } catch(error: any) {
       console.log(error)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Ошибка при авторизации пользователя' })
+    }
+  }
+
+  getLogin(req: Request): string {
+    try {
+      return this.enc.decode(req.headers['authorization'].split(' ')[1]);
+    } catch(error: any) {
+      return '';
     }
   }
 }

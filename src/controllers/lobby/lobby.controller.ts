@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { FormDataRequest } from 'nestjs-form-data';
 import { CreateLobbyData } from 'src/models/general.models';
 import { LobbyService } from 'src/services/lobby/lobby.service';
@@ -18,9 +18,8 @@ export class LobbyController {
 
   @Post('/create')
   @FormDataRequest()
-  createLobby(@Req() req: Response, @Body() loginInfo: CreateLobbyData, @Res() res: Response): void {
-    // console.log(req)
-    this._lobbyService.createLobby(loginInfo, res);
+  createLobby(@Req() req: Request, @Body() createLobbyInfo: CreateLobbyData, @Res() res: Response): void {
+    this._lobbyService.createLobby(req, res, createLobbyInfo);
   }
 
   @Get('/createInfo')
