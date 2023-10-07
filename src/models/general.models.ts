@@ -19,10 +19,11 @@ export class SuccessResponse {
 }
 
 export interface LobbyItem {
-  id: number;
   host: string;
   users: string[];
   status: number;
+  scenario: number;
+  maxPlayers: number;
 }
 
 export interface Scenario {

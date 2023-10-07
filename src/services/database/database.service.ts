@@ -14,6 +14,16 @@ export class DatabaseService {
   lobbiesDocId: string = '1EamewYN54MDBfppO8dz-qgGbXMXw3qc7toIJK9EJLS0';
   scenariosDocId: string = '15DyKnJ2zXTukQc4kMvdNzLZtdgbznj9Rc_iDWjYeDuM';
 
+  async loadSheet(sheetId: string): Promise<GoogleSpreadsheetWorksheet> {
+    const auth: any = new google.auth.GoogleAuth({
+      keyFile: './google-auth.json',
+      scopes: 'https://www.googleapis.com/auth/spreadsheets'
+    });
+    const doc: GoogleSpreadsheet = new GoogleSpreadsheet(sheetId, auth);
+    await doc.loadInfo();
+    return doc.sheetsByIndex[0];
+  }
+
   async loadSheetRows(sheetId: string): Promise<any[]> {
     const auth: any = new google.auth.GoogleAuth({
       keyFile: './google-auth.json',
@@ -58,6 +68,10 @@ export class DatabaseService {
 
   async getScenarios(): Promise<Scenario[]> {
     return await this.loadSheetRows(this.scenariosDocId);
+  }
+
+  async createLobby(lobbyItem: LobbyItem): Promise<void> {
+    (await this.loadSheet(this.scenariosDocId)).addRow(lobbyItem as any);
   }
 
   // async getRacesInfo(): Promise<RaceInfo[]> {

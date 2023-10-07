@@ -21,7 +21,6 @@ export class LobbyService {
         res.status(HttpStatus.SERVICE_UNAVAILABLE).json({ message: 'Ошибка получения списка лобби' });
       }
     } catch(error: any) {
-      console.log(error)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Ошибка при получении списка лобби' });
     }
   }
@@ -42,9 +41,16 @@ export class LobbyService {
   async createLobby(req: Request, res: Response, createLobbyInfo: CreateLobbyData): Promise<void> {
     try {
       const login: string = this._authService.getLogin(req);
-
+      const newLobby: LobbyItem = {
+        host: login,
+        users: [login],
+        status: 0,
+        scenario: createLobbyInfo.scenario,
+        maxPlayers: createLobbyInfo.playersCount
+      };
+      await this._databaseService.createLobby(newLobby);
+      res.status(HttpStatus.OK).json({ message: 'Лобби создано' });
     } catch(error: any) {
-      console.log(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Ошибка при создании лобби' });
     }
   }
