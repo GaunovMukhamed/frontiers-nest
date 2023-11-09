@@ -14,15 +14,13 @@ export class AuthService {
 
   enc = new Base64();
 
-  async authUser(loginInfo: LoginFormData, res: Response): Promise<void> {
+  authUser(loginInfo: LoginFormData, res: Response): void {
     try {
-      const foundUser: User | undefined = await this._databaseService.getUser(loginInfo.login);
+      const foundUser: User | undefined = this._databaseService.getUser(loginInfo.login);
+      console.log(foundUser)
       if(foundUser) {
         if(loginInfo.password === foundUser.password) {
-          res.status(HttpStatus.OK).json({
-            message: 'Вы успешно авторизованы',
-            login: loginInfo.login
-          });
+          res.status(HttpStatus.OK).json({ message: 'Вы успешно авторизованы' });
         } else {
           res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Неверный пароль' });
         }
@@ -30,7 +28,6 @@ export class AuthService {
         res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Пользователь не существует' });
       }
     } catch(error: any) {
-      console.log(error)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Ошибка при авторизации пользователя' })
     }
   }

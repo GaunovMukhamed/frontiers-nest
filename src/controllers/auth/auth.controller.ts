@@ -11,7 +11,7 @@ export class AuthController {
 
   @Post('/authUser')
   @FormDataRequest()
-  getHello(@Body() loginInfo: LoginFormData, @Res() res: Response): void {
+  loginUser(@Body() loginInfo: LoginFormData, @Res() res: Response): void {
     this._authService.authUser(loginInfo, res);
   }
 }

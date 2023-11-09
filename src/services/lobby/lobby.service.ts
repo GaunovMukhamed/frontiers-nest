@@ -33,7 +33,6 @@ export class LobbyService {
         playersCountOptions: [1,2,3,4]
       });
     } catch(error: any) {
-      console.log(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Ошибка при получении данных для создания лобби' });
     }
   }
